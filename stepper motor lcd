@@ -1,0 +1,53 @@
+#include <Adafruit_Sensor.h>
+// © 2025, Cognifront. Member of The IoT Kits Family.
+// Experiment 7: Stepper Motor Control via Microcontroller and LCD
+showing Speed and Direction
+#include <Wire.h>
+#include <Stepper.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+const int stepsPerRevolution = 2048;
+Stepper myStepper(stepsPerRevolution, 8, 10, 9, 11);
+void setup() {
+ Serial.begin(9600);
+ lcd.init();
+ lcd.backlight();
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Stepper Test");
+ delay(1000);
+ lcd.clear();
+ Serial.println("Stepper Motor Speed Test with I2C LCD");
+ }
+void loop() {
+ for (int spd = 5; spd <= 10; spd += 5) {
+ myStepper.setSpeed(spd);
+ Serial.print("Rotating CCW at ");
+ Serial.print(spd);
+ Serial.println(" RPM");
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Direction: CCW");
+ lcd.setCursor(0, 1);
+ lcd.print("Speed: ");
+ lcd.print(spd);
+ lcd.print(" RPM");
+ myStepper.step(stepsPerRevolution / 2); // Half revolution CW
+ delay(500);
+ }
+ for (int spd = 10; spd >= 5; spd -= 5) {
+ myStepper.setSpeed(spd);
+ Serial.print("Rotating CW at ");
+ Serial.print(spd);
+ Serial.println(" RPM");
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Direction: CW");
+ lcd.setCursor(0, 1);
+ lcd.print("Speed: ");
+ lcd.print(spd);
+ lcd.print(" RPM");
+ myStepper.step(-stepsPerRevolution / 2);
+ delay(500);
+ }
+}
