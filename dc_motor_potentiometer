@@ -1,0 +1,42 @@
+// Experiment 5: Controlling DC Motor Using Transistor Driver Circuit and
+Display potentiometer value and motor speed on 16x2 I2C LCD
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+const int Pot = A0;
+const int motorA1 = 5;
+const int motorA2 = 6;
+const int enableA = 9;
+void setup() {
+ Serial.begin(9600);
+
+ pinMode(Pot, INPUT);
+ pinMode(motorA1, OUTPUT);
+ pinMode(motorA2, OUTPUT);
+ pinMode(enableA, OUTPUT);
+ lcd.init();
+ lcd.backlight();
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Pot: ");
+ lcd.setCursor(0, 1);
+  lcd.print("Speed: ");
+}
+void loop() {
+ int potVal = analogRead(Pot);
+ int speed = map(potVal, 0, 1023, 0, 255);
+ digitalWrite(motorA1, HIGH);
+ digitalWrite(motorA2, LOW);
+ analogWrite(enableA, speed);
+ Serial.print("Potentiometer Value: ");
+ Serial.print(potVal);
+ Serial.print(" | Motor Speed (PWM): ");
+ Serial.println(speed);
+ lcd.setCursor(5, 0); // after "Pot: "
+ lcd.print(potVal);
+ lcd.print(" ");
+ lcd.setCursor(7, 1);
+ lcd.print(speed);
+ lcd.print(" ");
+ delay(200);
+}
