@@ -1,0 +1,39 @@
+// Experiment 3: Interfacing Potentiometer for Position Control
+Simulation and Display on LCD
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <Servo.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+const int Pot = A0;
+Servo myservo;
+void setup() {
+ pinMode(Pot, INPUT);
+ myservo.attach(8);
+ Serial.begin(9600);
+ Serial.println("Potentiometer to Servo Angle Control");
+ Serial.println("==================================");
+ lcd.init();
+ lcd.backlight();
+ lcd.clear();
+ lcd.setCursor(0, 0);
+ lcd.print("Pot: ");
+ lcd.setCursor(0, 1);
+ lcd.print("Angle: ");
+ }
+void loop() {
+ int potVal = analogRead(Pot);
+ int angle = map(potVal, 0, 1023, 0, 180);
+ myservo.write(angle);
+ Serial.print("Potentiometer Value: ");
+ Serial.print(potVal);
+ Serial.print(" | Servo Angle: ");
+ Serial.println(angle);
+ lcd.setCursor(5, 0);
+ lcd.print(potVal);
+ lcd.print(" ");
+ lcd.setCursor(7, 1);
+ lcd.print(angle);
+ lcd.print((char)223);
+ lcd.print(" ");
+ delay(100);
+}
